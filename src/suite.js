@@ -24,6 +24,10 @@ export default class {
     return this._features.map(f => f.string).join('\n\n');
   }
 
+  get features() {
+    return this._features;
+  }
+
   run(...args) {
     let callback = args.pop();
     let filter = args[0];

@@ -11,6 +11,13 @@ export default class {
     this._registerStepDefs(stepDefGroups);
   }
 
+  get fullTextForTerminal() {
+    return [
+      `  Scenario: ${this.name}`,
+      this.steps.map(sn => `    ${sn}`).join('\n'),
+    ].join('\n');
+  }
+
   _registerSteps(body) {
     let Given = this._step.bind(this, 'Given');
     let When = this._step.bind(this, 'When');

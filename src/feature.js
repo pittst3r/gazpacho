@@ -29,6 +29,15 @@ export default class {
     return this._scenarios.length;
   }
 
+  get fullTextForTerminal() {
+    return [
+      `Feature: ${this.name}`,
+      this._descriptionLines.map(line => `  ${line}`).join('\n'),
+      null,
+      this._scenarios.map(s => s.fullTextForTerminal).join('\n\n'),
+    ].join('\n');
+  }
+
   run(scenarioCallback) {
     this._scenarios.forEach((scenario, testIndex) => {
       let before = this.beforeEachScenario;
@@ -37,6 +46,10 @@ export default class {
       let testResult = stepSequence.run();
       scenarioCallback(testResult, testIndex);
     });
+  }
+
+  get _descriptionLines() {
+    return this.description.split('\n').map(line => line.trim());
   }
 
   _registerScenarios(body) {

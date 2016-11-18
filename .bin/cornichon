@@ -9,8 +9,26 @@ program
 var defaultSuiteFile = path.resolve('tmp/features');
 var suite = require(defaultSuiteFile).default;
 var n = suite.count;
-process.stdout.write(`1..${n}\n`);
-suite.run((result) => {
-  process.stdout.write(result.tap);
-  process.stdout.write('\n');
-});
+
+program
+  .command('print')
+  .description('Print gherkin for whole suite')
+  .action(function() {
+    suite.features.forEach((feature) => {
+      process.stdout.write(feature.fullTextForTerminal);
+      process.stdout.write('\n\n');
+    });
+  });
+
+program
+  .command('run')
+  .description('Run suite')
+  .action(function() {
+    process.stdout.write(`1..${n}\n`);
+    suite.run((result) => {
+      process.stdout.write(result.tap);
+      process.stdout.write('\n');
+    });
+  });
+
+program.parse(process.argv);
