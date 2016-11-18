@@ -1,0 +1,16 @@
+{
+  "framework": "custom",
+  "src_files": [
+    "tests/features/index.js",
+    "tests/features/**/*-feature.js",
+    "tests/features/steps-defs/**/*-steps.js",
+    "src/**/*.js"
+  ],
+  "serve_files": [
+    "tmp/require.js",
+    "tmp/adapter.js",
+    "tmp/features.js"
+  ],
+  "test_page": "tests/features/index.html",
+  "before_tests": "webpack --config webpack.cornichon.config.js"
+}
