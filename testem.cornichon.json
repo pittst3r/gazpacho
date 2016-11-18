@@ -6,11 +6,11 @@
     "tests/features/steps-defs/**/*-steps.js",
     "src/**/*.js"
   ],
-  "serve_files": [
-    "tmp/require.js",
-    "tmp/adapter.js",
-    "tmp/features.js"
-  ],
-  "test_page": "tests/features/index.html",
-  "before_tests": "webpack --config webpack.cornichon.config.js"
+  "before_tests": "webpack --config webpack.cornichon.config.js",
+  "launchers": {
+    "Cornichon": {
+      "command": "cornichon run",
+      "protocol": "tap"
+    }
+  }
 }
