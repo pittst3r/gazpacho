@@ -29,6 +29,14 @@ export default class {
     return this._scenarios.length;
   }
 
+  set beforeEachScenario(value) {
+    this._beforeEachScenario = value;
+  }
+
+  set afterEachScenario(value) {
+    this._afterEachScenario = value;
+  }
+
   get fullTextForTerminal() {
     return [
       `Feature: ${this.name}`,
@@ -40,8 +48,8 @@ export default class {
 
   run(scenarioCallback) {
     this._scenarios.forEach((scenario, testIndex) => {
-      let before = this.beforeEachScenario;
-      let after = this.afterEachScenario;
+      let before = this._beforeEachScenario;
+      let after = this._afterEachScenario;
       let stepSequence = new StepSequence(scenario, before, after);
       let testResult = stepSequence.run();
       scenarioCallback(testResult, testIndex);
