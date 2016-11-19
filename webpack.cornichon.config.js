@@ -14,14 +14,6 @@ module.exports = {
   module: {
     loaders: [
       {
-        test: /\.json$/,
-        loader: 'json',
-      },
-      {
-        test: /\.node$/,
-        loader: 'node',
-      },
-      {
         test: /\.js$/,
         exclude: /node_modules/,
         loader: 'babel',
@@ -36,9 +28,6 @@ module.exports = {
       },
     ],
   },
-  plugins: [
-    new webpack.IgnorePlugin(/\.idl$/),
-  ],
   resolve: {
     root: [
       path.resolve(__dirname),
