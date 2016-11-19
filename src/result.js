@@ -11,7 +11,7 @@ export default class {
       this._tapIndex,
       this._tapDescription,
       this._tapDiagnostic,
-    ].filter(t => t).join(' ');
+    ].filter(t => t.length > 0).join(' ');
   }
 
   get testNumber() {
@@ -43,9 +43,16 @@ export default class {
   }
 
   get _tapDiagnostic() {
-    if (!this._scenarioResult.error) {
-      return;
+    let error = this._scenarioResult.error;
+
+    if (!error) {
+      return '';
     }
-    return `\n# Failed step: "${this._scenarioResult.error.stepName}"`;
+
+    return [
+      null,
+      `# Failed step: "${error.stepName}"`,
+      `# ${error.name}: ${error.message}`,
+    ].join('\n');
   }
 }
