@@ -1,4 +1,5 @@
 import StepSequence from 'step-sequence';
+import Background from 'background';
 import Scenario from 'scenario';
 
 export default class {
@@ -61,12 +62,25 @@ export default class {
   }
 
   _registerScenarios(body) {
+    let background = this._addBackground.bind(this);
     let scenario = this._addScenario.bind(this);
 
-    body(scenario);
+    body({
+      Background: background,
+      Scenario: scenario,
+    });
+  }
+
+  _addBackground(...args) {
+    this._background = new Background(...args);
   }
 
   _addScenario(...args) {
-    this._scenarios.push(new Scenario(...args));
+    let scenario = new Scenario(...args);
+
+    if (this._background) {
+      scenario.prependBackground(this._background);
+    }
+    this._scenarios.push(scenario);
   }
 }

@@ -8,7 +8,7 @@ export default new StepDefGroup((StepDef) => {
   let caughtError;
 
   StepDef('I have defined a successful feature', () => {
-    definedFeature = new Feature('successful feature', '', (Scenario) => {
+    definedFeature = new Feature('successful feature', '', ({ Scenario, }) => {
       Scenario('success', BasicSteps, ({ Then, }) => {
         Then('I am successful');
       });
@@ -16,7 +16,7 @@ export default new StepDefGroup((StepDef) => {
   });
 
   StepDef('I have defined a failing feature', () => {
-    definedFeature = new Feature('unsuccessful feature', '', (Scenario) => {
+    definedFeature = new Feature('unsuccessful feature', '', ({ Scenario, }) => {
       Scenario('failure', BasicSteps, ({ Then, }) => {
         Then('I am not successful');
       });
@@ -24,9 +24,21 @@ export default new StepDefGroup((StepDef) => {
   });
 
   StepDef('I have defined a feature using an undefined step def', () => {
-    definedFeature = new Feature('undefined step def feature', '', (Scenario) => {
+    definedFeature = new Feature('undefined step def feature', '', ({ Scenario, }) => {
       Scenario('success', BasicSteps, ({ Then, }) => {
         Then('whatever whatever I do what I want');
+      });
+    });
+  });
+
+  StepDef('I have defined a feature with a Background', () => {
+    definedFeature = new Feature('feature with background', '', ({ Scenario, Background, }) => {
+      Background(BasicSteps, ({ Given, }) => {
+        Given('I do a thing common to all scenarios');
+      });
+
+      Scenario('success', BasicSteps, ({ Then, }) => {
+        Then('that thing should have been done');
       });
     });
   });
