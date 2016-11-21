@@ -77,7 +77,8 @@ Feature: successful feature
   whatever
 
   Scenario: success
-    Then I am successful`.trimLeft();
+    Then I am successful
+`.trimLeft();
 
     assert.equal(definedFeatureGherkin, expectedGherkin);
   });
@@ -91,7 +92,8 @@ Feature: feature with background
     Given I do a thing common to all scenarios
 
   Scenario: success
-    Then that thing should have been done`.trimLeft();
+    Then that thing should have been done
+`.trimLeft();
 
     assert.equal(definedFeatureGherkin, expectedGherkin);
   });

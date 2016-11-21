@@ -21,7 +21,7 @@ export default class Suite {
   }
 
   get gherkin() {
-    return this._features.map(f => f.gherkin).join('\n\n');
+    return this._features.map(f => f.gherkin).join('\n');
   }
 
   get features() {

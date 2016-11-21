@@ -56,6 +56,8 @@ export default class Feature {
       gherkin.push(scenarios);
     }
 
+    gherkin.push(null);
+
     return gherkin.join('\n');
   }
 
