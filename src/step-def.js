@@ -1,4 +1,4 @@
-export default class {
+export default class StepDef {
   constructor(name, definition) {
     this.name = name;
     this.definition = definition;

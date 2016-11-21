@@ -5,10 +5,10 @@ import BasicSteps from './basic-steps';
 export default new StepDefGroup((StepDef) => {
   let definedFeature;
   let definedFeatureResult;
-  let caughtError;
+  let definedFeatureGherkin;
 
   StepDef('I have defined a successful feature', () => {
-    definedFeature = new Feature('successful feature', '', ({ Scenario, }) => {
+    definedFeature = new Feature('successful feature', 'whatever', ({ Scenario, }) => {
       Scenario('success', BasicSteps, ({ Then, }) => {
         Then('I am successful');
       });
@@ -32,25 +32,23 @@ export default new StepDefGroup((StepDef) => {
   });
 
   StepDef('I have defined a feature with a Background', () => {
-    definedFeature = new Feature('feature with background', '', ({ Scenario, Background, }) => {
-      Background(BasicSteps, ({ Given, }) => {
-        Given('I do a thing common to all scenarios');
-      });
+    definedFeature = new Feature('feature with background', 'whatever',
+      ({ Scenario, Background, }) => {
+        Background(BasicSteps, ({ Given, }) => {
+          Given('I do a thing common to all scenarios');
+        });
 
-      Scenario('success', BasicSteps, ({ Then, }) => {
-        Then('that thing should have been done');
-      });
-    });
+        Scenario('success', BasicSteps, ({ Then, }) => {
+          Then('that thing should have been done');
+        });
+      }
+    );
   });
 
   StepDef('I run the feature', () => {
-    try {
-      definedFeature.run((result) => {
-        definedFeatureResult = result;
-      });
-    } catch(e) {
-      caughtError = e;
-    }
+    definedFeature.run((result) => {
+      definedFeatureResult = result;
+    });
   });
 
   StepDef('the feature should be successful', (assert) => {
@@ -62,10 +60,39 @@ export default new StepDefGroup((StepDef) => {
   });
 
   StepDef('an undefined step def error should be raised', (assert) => {
-    assert.equal(caughtError.name, 'AssertionError');
+    assert.equal(definedFeatureResult.error.name, 'AssertionError');
     assert.equal(
-      caughtError.message,
+      definedFeatureResult.error.message,
       'Step "whatever whatever I do what I want" could not be found in step defs'
     );
+  });
+
+  StepDef('I call the `gherkin` prop on the feature', () => {
+    definedFeatureGherkin = definedFeature.gherkin;
+  });
+
+  StepDef('it should return the gherkin string', (assert) => {
+    let expectedGherkin = `
+Feature: successful feature
+  whatever
+
+  Scenario: success
+    Then I am successful`.trimLeft();
+
+    assert.equal(definedFeatureGherkin, expectedGherkin);
+  });
+
+  StepDef('it should return the gherkin string with the background', (assert) => {
+    let expectedGherkin = `
+Feature: feature with background
+  whatever
+
+  Background:
+    Given I do a thing common to all scenarios
+
+  Scenario: success
+    Then that thing should have been done`.trimLeft();
+
+    assert.equal(definedFeatureGherkin, expectedGherkin);
   });
 });

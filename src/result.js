@@ -1,4 +1,4 @@
-export default class {
+export default class Result {
   constructor(feature, scenarioResult, testIndex) {
     this._feature = feature;
     this._scenarioResult = scenarioResult;

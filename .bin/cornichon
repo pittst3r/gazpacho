@@ -14,10 +14,7 @@ program
   .command('print')
   .description('Print gherkin for whole suite')
   .action(function() {
-    suite.features.forEach((feature) => {
-      process.stdout.write(feature.fullTextForTerminal);
-      process.stdout.write('\n\n');
-    });
+    process.stdout.write(suite.gherkin);
   });
 
 program

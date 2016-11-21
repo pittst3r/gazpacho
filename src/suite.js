@@ -2,7 +2,7 @@ import Result from 'result';
 
 const NOOP = function() {};
 
-export default class {
+export default class Suite {
   constructor(optionsOrFeatures, features) {
     let options = {};
 
@@ -20,8 +20,8 @@ export default class {
     return this._features.reduce((memo, f) => memo + f.scenarioCount, 0);
   }
 
-  get string() {
-    return this._features.map(f => f.string).join('\n\n');
+  get gherkin() {
+    return this._features.map(f => f.gherkin).join('\n\n');
   }
 
   get features() {

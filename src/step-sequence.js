@@ -2,7 +2,7 @@ import * as assert from 'assert';
 
 const NOOP = function() {};
 
-export default class {
+export default class StepSequence {
   constructor({ stepNames, stepDefs, name, }, before, after) {
     this.stepNames = stepNames;
     this.stepDefs = stepDefs;
@@ -17,9 +17,8 @@ export default class {
     let didPass = true;
     let error;
 
-    this._validateStepsWithStepDefs();
-
     try {
+      this._validateStepsWithStepDefs();
       this.before();
       this._executeStepsWithStepDefs();
       this.after();

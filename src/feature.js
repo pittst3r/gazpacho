@@ -2,7 +2,7 @@ import StepSequence from 'step-sequence';
 import Background from 'background';
 import Scenario from 'scenario';
 
-export default class {
+export default class Feature {
   constructor(name, description, body) {
     this._name = name;
     this._description = description;
@@ -38,13 +38,25 @@ export default class {
     this._afterEachScenario = value;
   }
 
-  get fullTextForTerminal() {
-    return [
-      `Feature: ${this.name}`,
-      this._descriptionLines.map(line => `  ${line}`).join('\n'),
-      null,
-      this._scenarios.map(s => s.fullTextForTerminal).join('\n\n'),
-    ].join('\n');
+  get gherkin() {
+    let gherkin = [];
+
+    gherkin.push(`Feature: ${this.name}`);
+    if (this._descriptionLines.length > 0) {
+      let description = this._descriptionLines.map(line => `  ${line}`).join('\n');
+      gherkin.push(description);
+    }
+    gherkin.push(null);
+    if (this._background) {
+      let background = `${this._background.gherkin}\n`;
+      gherkin.push(background);
+    }
+    if (this._scenarios.length > 0) {
+      let scenarios = this._scenarios.map(s => s.gherkin).join('\n\n');
+      gherkin.push(scenarios);
+    }
+
+    return gherkin.join('\n');
   }
 
   run(scenarioCallback) {

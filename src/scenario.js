@@ -1,4 +1,4 @@
-export default class {
+export default class Scenario {
   constructor(name, ...stepDefGroupsAndBody) {
     let body = stepDefGroupsAndBody.pop();
     let stepDefGroups = stepDefGroupsAndBody;
@@ -11,7 +11,7 @@ export default class {
     this._registerStepDefs(stepDefGroups);
   }
 
-  get fullTextForTerminal() {
+  get gherkin() {
     return [
       `  Scenario: ${this.name}`,
       this.steps.map(sn => `    ${sn}`).join('\n'),

@@ -1,4 +1,4 @@
-export default class {
+export default class Background {
   constructor(...stepDefGroupsAndBody) {
     let body = stepDefGroupsAndBody.pop();
     let stepDefGroups = stepDefGroupsAndBody;
@@ -10,7 +10,7 @@ export default class {
     this._registerStepDefs(stepDefGroups);
   }
 
-  get fullTextForTerminal() {
+  get gherkin() {
     return [
       '  Background:',
       this.steps.map(sn => `    ${sn}`).join('\n'),
