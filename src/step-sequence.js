@@ -1,15 +1,13 @@
 import * as assert from 'assert';
 
-const NOOP = function() {};
-
 export default class StepSequence {
   constructor({ stepNames, stepDefs, name, }, before, after) {
     this.stepNames = stepNames;
     this.stepDefs = stepDefs;
     this.name = name;
     this.sequenceAssert = assert;
-    this.before = before || NOOP;
-    this.after = after || NOOP;
+    this.before = before;
+    this.after = after;
   }
 
   run() {

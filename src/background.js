@@ -18,10 +18,10 @@ export default class Background {
   }
 
   _registerSteps(body) {
-    let Given = this._step.bind(this, 'Given');
-    let And = this._step.bind(this, 'And');
+    let given = this._step.bind(this, 'Given');
+    let and = this._step.bind(this, 'And');
 
-    body({ Given, And, });
+    body({ given, and, });
   }
 
   _registerStepDefs(stepDefGroups) {

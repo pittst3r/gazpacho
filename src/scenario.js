@@ -24,12 +24,12 @@ export default class Scenario {
   }
 
   _registerSteps(body) {
-    let Given = this._step.bind(this, 'Given');
-    let When = this._step.bind(this, 'When');
-    let And = this._step.bind(this, 'And');
-    let Then = this._step.bind(this, 'Then');
+    let given = this._step.bind(this, 'Given');
+    let when = this._step.bind(this, 'When');
+    let and = this._step.bind(this, 'And');
+    let then = this._step.bind(this, 'Then');
 
-    body({ Given, And, When, Then, });
+    body({ given, and, when, then, });
   }
 
   _registerStepDefs(stepDefGroups) {

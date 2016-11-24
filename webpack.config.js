@@ -3,7 +3,7 @@ var path = require('path');
 
 module.exports = {
   entry: {
-    cornichon: './src/index.js',
+    cornichon: './src/cornichon.js',
     helpers: './src/helpers/index.js',
   },
   output: {

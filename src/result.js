@@ -1,8 +1,8 @@
 export default class Result {
-  constructor(feature, scenarioResult, testIndex) {
-    this._feature = feature;
+  constructor(scenarioResult, testIndex, feature) {
     this._scenarioResult = scenarioResult;
     this._testIndex = testIndex;
+    this._feature = feature;
   }
 
   get tap() {
@@ -27,7 +27,7 @@ export default class Result {
   }
 
   get name() {
-    return `${this.featureName}: ${this._scenarioResult.name}`;
+    return `${this._feature.name}: ${this._scenarioResult.name}`;
   }
 
   get _tapStatus() {
@@ -35,11 +35,11 @@ export default class Result {
   }
 
   get _tapIndex() {
-    return this._testIndex + 1;
+    return (this._testIndex + 1).toString();
   }
 
   get _tapDescription() {
-    return `${this._feature.name}: ${this._scenarioResult.name}`;
+    return this.name;
   }
 
   get _tapDiagnostic() {

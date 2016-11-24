@@ -2,26 +2,38 @@
 
 var program = require('commander');
 var path = require('path');
+var cornichon = require('cornichon');
+var Suite = cornichon.Suite;
+var queue = cornichon.queue;
+require(path.resolve('tmp/features'));
+
+var suite;
+
+function loadTests(options) {
+  suite = new Suite(options);
+  suite.processQueue(queue);
+}
 
 program
   .version('0.1.0');
-
-var defaultSuiteFile = path.resolve('tmp/features');
-var suite = require(defaultSuiteFile).default;
-var n = suite.count;
 
 program
   .command('print')
   .description('Print gherkin for whole suite')
   .action(function() {
+    loadTests({});
     process.stdout.write(suite.gherkin);
   });
 
 program
   .command('run')
   .description('Run suite')
-  .action(function() {
-    process.stdout.write(`1..${n}\n`);
+  .option('-f, --filter <pattern>', 'Filter tests by feature + scenario name')
+  .action(function(cmd) {
+    var filter;
+    filter = cmd.filter;
+    loadTests({ filter, });
+    process.stdout.write(`1..${suite.count}\n`);
     suite.run((result) => {
       process.stdout.write(result.tap);
       process.stdout.write('\n');

@@ -1,100 +1,68 @@
-import Feature from 'feature';
-import StepDefGroup from 'step-def-group';
+import {
+  StepDefGroup,
+  Suite,
+  background,
+  feature,
+  queue,
+  scenario,
+} from 'cornichon';
 import BasicSteps from './basic-steps';
 
-export default new StepDefGroup((StepDef) => {
-  let definedFeature;
-  let definedFeatureResult;
-  let definedFeatureGherkin;
+export default new StepDefGroup((stepDef) => {
+  let results;
 
-  StepDef('I have defined a successful feature', () => {
-    definedFeature = new Feature('successful feature', 'whatever', ({ Scenario, }) => {
-      Scenario('success', BasicSteps, ({ Then, }) => {
-        Then('I am successful');
-      });
+  stepDef('I have defined a successful scenario', () => {
+    feature('successful feature', 'whatever');
+    scenario('success', BasicSteps, ({ then, }) => {
+      then('I am successful');
     });
   });
 
-  StepDef('I have defined a failing feature', () => {
-    definedFeature = new Feature('unsuccessful feature', '', ({ Scenario, }) => {
-      Scenario('failure', BasicSteps, ({ Then, }) => {
-        Then('I am not successful');
-      });
+  stepDef('I have defined a failing scenario', () => {
+    feature('failing feature', 'whatever');
+    scenario('failure', BasicSteps, ({ then, }) => {
+      then('I am not successful');
     });
   });
 
-  StepDef('I have defined a feature using an undefined step def', () => {
-    definedFeature = new Feature('undefined step def feature', '', ({ Scenario, }) => {
-      Scenario('success', BasicSteps, ({ Then, }) => {
-        Then('whatever whatever I do what I want');
-      });
+  stepDef('I have defined a scenario with a background', () => {
+    feature('background feature', 'whatever');
+    background(BasicSteps, ({ given, }) => {
+      given('I do a thing common to all scenarios');
+    });
+    scenario('success', BasicSteps, ({ then, }) => {
+      then('that thing should have been done');
     });
   });
 
-  StepDef('I have defined a feature with a Background', () => {
-    definedFeature = new Feature('feature with background', 'whatever',
-      ({ Scenario, Background, }) => {
-        Background(BasicSteps, ({ Given, }) => {
-          Given('I do a thing common to all scenarios');
-        });
-
-        Scenario('success', BasicSteps, ({ Then, }) => {
-          Then('that thing should have been done');
-        });
-      }
-    );
-  });
-
-  StepDef('I run the feature', () => {
-    definedFeature.run((result) => {
-      definedFeatureResult = result;
+  stepDef('I have defined some scenarios', () => {
+    feature('successful feature', 'whatever');
+    scenario('foo', BasicSteps, ({ then, }) => {
+      then('I am successful');
+    });
+    scenario('bar', BasicSteps, ({ then, }) => {
+      then('I am successful');
     });
   });
 
-  StepDef('the feature should be successful', (assert) => {
-    assert.ok(definedFeatureResult.didPass);
+  stepDef('I run the suite', () => {
+    results = [];
+    let suite = new Suite({});
+    suite.processQueue(queue);
+    suite.run((result) => {
+      results.push(result);
+    });
   });
 
-  StepDef('the feature should be unsuccessful', (assert) => {
-    assert.ok(!definedFeatureResult.didPass);
+  stepDef('the scenario should be successful', (assert) => {
+    results.forEach((result) => {
+      assert.ok(result.didPass);
+    });
   });
 
-  StepDef('an undefined step def error should be raised', (assert) => {
-    assert.equal(definedFeatureResult.error.name, 'AssertionError');
-    assert.equal(
-      definedFeatureResult.error.message,
-      'Step "whatever whatever I do what I want" could not be found in step defs'
-    );
-  });
-
-  StepDef('I call the `gherkin` prop on the feature', () => {
-    definedFeatureGherkin = definedFeature.gherkin;
-  });
-
-  StepDef('it should return the gherkin string', (assert) => {
-    let expectedGherkin = `
-Feature: successful feature
-  whatever
-
-  Scenario: success
-    Then I am successful
-`.trimLeft();
-
-    assert.equal(definedFeatureGherkin, expectedGherkin);
-  });
-
-  StepDef('it should return the gherkin string with the background', (assert) => {
-    let expectedGherkin = `
-Feature: feature with background
-  whatever
-
-  Background:
-    Given I do a thing common to all scenarios
-
-  Scenario: success
-    Then that thing should have been done
-`.trimLeft();
-
-    assert.equal(definedFeatureGherkin, expectedGherkin);
+  stepDef('the scenario should be unsuccessful', (assert) => {
+    results.forEach((result) => {
+      assert.ok(!result.didPass);
+    });
   });
 });
