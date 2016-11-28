@@ -14,7 +14,7 @@ QUnit.test('it exposes a `tap` property', function(assert) {
     didPass: true,
   };
   let testIndex = 0;
-  let result = new Result(feature, scenarioResult, testIndex);
+  let result = new Result(scenarioResult, testIndex, feature);
 
   assert.equal(result.tap, 'ok 1 feature name: scenario name');
 });

@@ -1,37 +1,21 @@
 export default class Background {
-  constructor(...stepDefGroupsAndBody) {
-    let body = stepDefGroupsAndBody.pop();
-    let stepDefGroups = stepDefGroupsAndBody;
-
-    this.stepNames = [];
+  constructor(...stepDefGroups) {
     this.steps = [];
-    this.stepDefs = {};
-    this._registerSteps(body);
-    this._registerStepDefs(stepDefGroups);
+    this.stepDefs = [];
+    this::registerStepDefs(stepDefGroups);
   }
 
   get gherkin() {
-    return [
-      '  Background:',
-      this.steps.map(sn => `    ${sn}`).join('\n'),
-    ].join('\n');
+    return '\n  Background:\n';
   }
 
-  _registerSteps(body) {
-    let given = this._step.bind(this, 'Given');
-    let and = this._step.bind(this, 'And');
-
-    body({ given, and, });
+  registerStep(step) {
+    this.steps.push(step);
   }
+}
 
-  _registerStepDefs(stepDefGroups) {
-    stepDefGroups.forEach((stepDefGroup) => {
-      Object.assign(this.stepDefs, stepDefGroup.stepDefs);
-    });
-  }
-
-  _step(stepType, stepName) {
-    this.stepNames.push(stepName);
-    this.steps.push(`${stepType} ${stepName}`);
-  }
+function registerStepDefs(stepDefGroups) {
+  stepDefGroups.forEach((stepDefGroup) => {
+    this.stepDefs = this.stepDefs.concat(stepDefGroup.stepDefs);
+  });
 }

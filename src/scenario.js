@@ -1,45 +1,27 @@
 export default class Scenario {
-  constructor(name, ...stepDefGroupsAndBody) {
-    let body = stepDefGroupsAndBody.pop();
-    let stepDefGroups = stepDefGroupsAndBody;
-
-    this.stepNames = [];
-    this.steps = [];
-    this.stepDefs = {};
+  constructor(name, ...stepDefGroups) {
     this.name = name;
-    this._registerSteps(body);
-    this._registerStepDefs(stepDefGroups);
+    this.steps = [];
+    this.stepDefs = [];
+    this::registerStepDefs(stepDefGroups);
   }
 
   get gherkin() {
-    return [
-      `  Scenario: ${this.name}`,
-      this.steps.map(sn => `    ${sn}`).join('\n'),
-    ].join('\n');
+    return `\n  Scenario: ${this.name}\n`;
+  }
+
+  registerStep(step) {
+    this.steps.push(step);
   }
 
   prependBackground(background) {
-    this.stepNames = background.stepNames.concat(this.stepNames);
-    Object.assign(this.stepDefs, background.stepDefs);
+    this.steps = background.steps.concat(this.steps);
+    this.stepDefs = background.stepDefs.concat(this.stepDefs);
   }
+}
 
-  _registerSteps(body) {
-    let given = this._step.bind(this, 'Given');
-    let when = this._step.bind(this, 'When');
-    let and = this._step.bind(this, 'And');
-    let then = this._step.bind(this, 'Then');
-
-    body({ given, and, when, then, });
-  }
-
-  _registerStepDefs(stepDefGroups) {
-    stepDefGroups.forEach((stepDefGroup) => {
-      Object.assign(this.stepDefs, stepDefGroup.stepDefs);
-    });
-  }
-
-  _step(stepType, stepName) {
-    this.stepNames.push(stepName);
-    this.steps.push(`${stepType} ${stepName}`);
-  }
+function registerStepDefs(stepDefGroups) {
+  stepDefGroups.forEach((stepDefGroup) => {
+    this.stepDefs = this.stepDefs.concat(stepDefGroup.stepDefs);
+  });
 }

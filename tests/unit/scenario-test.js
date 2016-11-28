@@ -3,58 +3,39 @@ import Scenario from 'scenario';
 
 QUnit.module('Unit | Scenario');
 
-QUnit.test('it exposes a `steps` property', function(assert) {
+QUnit.test('get gherkin', function(assert) {
   assert.expect(1);
 
-  let scenario = new Scenario('cool scenario', ({ When, Then, }) => {
-    When('foo');
-    Then('bar');
-  });
+  let scenario = new Scenario('cool scenario');
 
-  let actualSteps = scenario.steps;
-  let expectedSteps = ['When foo', 'Then bar',];
-
-  assert.deepEqual(actualSteps, expectedSteps);
+  assert.equal(scenario.gherkin, '\n  Scenario: cool scenario\n');
 });
 
-QUnit.test('it exposes a `stepNames` property', function(assert) {
+QUnit.test('#registerStep', function(assert) {
   assert.expect(1);
 
-  let scenario = new Scenario('cool scenario', ({ When, Then, }) => {
-    When('foo');
-    Then('bar');
-  });
+  let scenario = new Scenario('cool scenario');
+  let step = 'whatever';
 
-  let actualSteps = scenario.stepNames;
-  let expectedSteps = ['foo', 'bar',];
+  scenario.registerStep(step);
 
-  assert.deepEqual(actualSteps, expectedSteps);
+  assert.deepEqual(scenario.steps, [step,]);
 });
 
-QUnit.test('it exposes a `name` property', function(assert) {
-  assert.expect(1);
+QUnit.test('#prependBackground', function(assert) {
+  assert.expect(2);
 
-  let scenario = new Scenario('cool scenario', () => {});
-
-  assert.equal(scenario.name, 'cool scenario');
-});
-
-QUnit.test('it exposes a `stepDefs` property', function(assert) {
-  assert.expect(1);
-
-  let StepDefMock = 'step def mock';
-  let SweetStepDefGroup = {
-    stepDefs: {
-      'foo': StepDefMock,
-      'bar': StepDefMock,
-    },
+  let scenario = new Scenario('cool scenario');
+  let background = {
+    steps: ['foo step',],
+    stepDefs: ['foo step def',],
   };
-  let scenario = new Scenario('cool scenario', SweetStepDefGroup, ({ When, Then, }) => {
-    When('foo');
-    Then('bar');
-  });
-  let actualStepDefs = scenario.stepDefs;
-  let expectedStepDefs = SweetStepDefGroup.stepDefs;
 
-  assert.deepEqual(actualStepDefs, expectedStepDefs);
+  scenario.steps = ['bar step',];
+  scenario.stepDefs = ['bar step def',];
+
+  scenario.prependBackground(background);
+
+  assert.deepEqual(scenario.steps, ['foo step', 'bar step',]);
+  assert.deepEqual(scenario.stepDefs, ['foo step def', 'bar step def',]);
 });

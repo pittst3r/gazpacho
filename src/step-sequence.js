@@ -1,60 +1,55 @@
 import * as assert from 'assert';
 
+const { assign, } = Object;
+
 export default class StepSequence {
-  constructor({ stepNames, stepDefs, name, }, before, after) {
-    this.stepNames = stepNames;
-    this.stepDefs = stepDefs;
-    this.name = name;
-    this.sequenceAssert = assert;
-    this.before = before;
-    this.after = after;
+  constructor({ steps, stepDefs, name, }, before, after) {
+    this._after = after;
+    this._before = before;
+    this._name = name;
+    this._stepDefs = stepDefs;
+    this._steps = steps;
   }
 
   run() {
-    let name = this.name;
-    let didPass = true;
-    let error;
+    let name = this._name;
+    let sequenceResult = { name, };
 
-    try {
-      this._validateStepsWithStepDefs();
-      this.before();
-      this._executeStepsWithStepDefs();
-      this.after();
-    } catch(e) {
-      error = e;
-      error.stepName = this.currentStep;
-      didPass = false;
-    }
+    this._before();
+    assign(sequenceResult, this::runSteps());
+    this._after();
 
-    return { name, didPass, error, };
+    return sequenceResult;
+  }
+}
+
+function runSteps() {
+  let didPass = true;
+  let error;
+
+  try {
+    this::executeStepDefsWithSteps();
+  } catch(e) {
+    error = e;
+    error.stepName = this.currentStep;
+    didPass = false;
   }
 
-  _validateStepsWithStepDefs() {
-    let {
-      stepNames,
-      stepDefs,
-    } = this;
-    let stepDefNames = Object.getOwnPropertyNames(stepDefs);
+  return { didPass, error, };
+}
 
-    stepNames.forEach((stepName) => {
-      assert.ok(
-        stepDefNames.includes(stepName),
-        `Step "${stepName}" could not be found in step defs`
-      );
-    });
-  }
+function executeStepDefsWithSteps() {
+  this._steps.forEach(step => {
+    let stepDef = this::findStepDefFromStep(step);
+    this.currentStep = step.name;
+    stepDef.execute(step.template);
+  });
+}
 
-  _executeStepsWithStepDefs() {
-    let {
-      stepNames,
-      stepDefs,
-      sequenceAssert,
-    } = this;
+function findStepDefFromStep(step) {
+  let stepDef = this._stepDefs.find(sd => sd.matchesTemplate(step.template));
 
-    stepNames.forEach((stepName) => {
-      let stepDef = stepDefs[stepName];
-      this.currentStep = stepName;
-      stepDef.execute(sequenceAssert);
-    });
-  }
+  assert.ok(stepDef, `Step "${step.name}" could not be found in step defs`);
+
+  return stepDef;
 }

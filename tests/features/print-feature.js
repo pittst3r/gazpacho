@@ -1,21 +1,24 @@
-import Feature from 'feature';
+import {
+  feature,
+  scenario,
+  given,
+  when,
+  then,
+} from 'cornichon';
 import FeatureSteps from 'tests/features/step-defs/feature-steps';
+import PrintSteps from 'tests/features/step-defs/print-steps';
 
-export default new Feature('Print', `
-  In order to easily view features
+feature('Print',
+ `In order to easily view features
   As a developer 
-  I want to have access to the gherkin output of a feature`,
-  ({ Scenario, }) => {
-    Scenario('Without a background', FeatureSteps, ({ Given, When, Then, }) => {
-      Given('I have defined a successful feature');
-      When('I call the `gherkin` prop on the feature');
-      Then('it should return the gherkin string');
-    });
+  I want to see the gherkin of the whole suite`);
 
-    Scenario('With a background', FeatureSteps, ({ Given, When, Then, }) => {
-      Given('I have defined a feature with a Background');
-      When('I call the `gherkin` prop on the feature');
-      Then('it should return the gherkin string with the background');
-    });
-  }
-);
+scenario('Without a background', FeatureSteps, PrintSteps);
+given`I have defined ${1} successful scenarios`;
+when`I call the gherkin prop on the suite`;
+then`it should return the gherkin string`;
+
+scenario('With a background', FeatureSteps, PrintSteps);
+given`I have defined a scenario with a background`;
+when`I call the gherkin prop on the suite`;
+then`it should return the gherkin string with the background`;

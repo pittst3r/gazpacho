@@ -5,13 +5,18 @@ module.exports = {
     "es6": true,
   },
   "extends": "eslint:recommended",
+  "parser": "babel-eslint",
   "parserOptions": {
+    "allowImportExportEverywhere": false,
+    "sourceType": "module",
+    "ecmaVersion": 8,
     "ecmaFeatures": {
       "experimentalObjectRestSpread": true,
     },
-    "sourceType": "module",
   },
-  "plugins": [],
+  "plugins": [
+    "prefer-bind-operator",
+  ],
   "rules": {
     "comma-dangle": [
       "error",
@@ -76,6 +81,7 @@ module.exports = {
     "template-curly-spacing": [
       "error",
     ],
+    "prefer-bind-operator/prefer-bind-operator": 2,
   },
   "globals": {
     "QUnit": false,

@@ -10,13 +10,13 @@ QUnit.test('it exposes a `stepDefs` property', function(assert) {
     stepDef('foo', 'bar');
   });
   let actualStepDefs = group.stepDefs;
-  let expectedStepDefs = {
-    'foo': {
+  let expectedStepDefs = [
+    {
       name: 'foo',
       definition: 'bar',
     },
-  };
+  ];
 
-  assert.equal(actualStepDefs.foo.name, expectedStepDefs.foo.name);
-  assert.equal(actualStepDefs.foo.definition, expectedStepDefs.foo.definition);
+  assert.equal(actualStepDefs[0].name, expectedStepDefs[0].name);
+  assert.equal(actualStepDefs[0].definition, expectedStepDefs[0].definition);
 });

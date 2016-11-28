@@ -3,46 +3,44 @@ import {
   Suite,
   background,
   feature,
+  given,
   queue,
   scenario,
+  then,
+  when,
+  matcher,
 } from 'cornichon';
 import BasicSteps from './basic-steps';
 
 export default new StepDefGroup((stepDef) => {
   let results;
 
-  stepDef('I have defined a successful scenario', () => {
+  stepDef(matcher`I have defined ${'n'} successful scenarios`, (_assert, n) => {
     feature('successful feature', 'whatever');
-    scenario('success', BasicSteps, ({ then, }) => {
-      then('I am successful');
-    });
+    for (let i = 0; i < n; i++) {
+      scenario(`${i}`, BasicSteps);
+      then`I am successful`;
+    }
   });
 
-  stepDef('I have defined a failing scenario', () => {
+  stepDef(matcher`I have defined ${'n'} failing scenarios`, () => {
     feature('failing feature', 'whatever');
-    scenario('failure', BasicSteps, ({ then, }) => {
-      then('I am not successful');
-    });
+    scenario('failure', BasicSteps);
+    then`I am not successful`;
   });
 
   stepDef('I have defined a scenario with a background', () => {
     feature('background feature', 'whatever');
-    background(BasicSteps, ({ given, }) => {
-      given('I do a thing common to all scenarios');
-    });
-    scenario('success', BasicSteps, ({ then, }) => {
-      then('that thing should have been done');
-    });
+    background(BasicSteps);
+    given`I do a thing common to all scenarios`;
+    scenario('success', BasicSteps);
+    then`that thing should have been done`;
   });
 
-  stepDef('I have defined some scenarios', () => {
-    feature('successful feature', 'whatever');
-    scenario('foo', BasicSteps, ({ then, }) => {
-      then('I am successful');
-    });
-    scenario('bar', BasicSteps, ({ then, }) => {
-      then('I am successful');
-    });
+  stepDef('I have defined a scenario using an undefined step def', () => {
+    feature('undefined step def feature', 'whatever');
+    scenario('foo', BasicSteps);
+    when`whatever whatever I do what I want`;
   });
 
   stepDef('I run the suite', () => {
@@ -54,15 +52,26 @@ export default new StepDefGroup((stepDef) => {
     });
   });
 
-  stepDef('the scenario should be successful', (assert) => {
+  stepDef('the scenarios should be successful', (assert) => {
+    assert.expect(results.length || 1);
     results.forEach((result) => {
-      assert.ok(result.didPass);
+      assert.ok(result.didPass, `Expected didPass to be true but was ${result.didPass}`);
     });
   });
 
-  stepDef('the scenario should be unsuccessful', (assert) => {
+  stepDef('the scenarios should be unsuccessful', (assert) => {
+    assert.expect(results.length || 1);
     results.forEach((result) => {
-      assert.ok(!result.didPass);
+      assert.notOk(result.didPass);
     });
+  });
+
+  stepDef('an undefined step def error should be raised', (assert) => {
+    assert.expect(1);
+    let actual = results[0].error.message;
+    let expected =
+      'Step "whatever whatever I do what I want" could not be found in step defs';
+
+    assert.equal(actual, expected);
   });
 });

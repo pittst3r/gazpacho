@@ -26,7 +26,7 @@ export default class Feature {
       gherkin.push(description);
     }
 
-    return gherkin.join('\n');
+    return gherkin.join('\n').concat('\n');
   }
 
   get _descriptionLines() {

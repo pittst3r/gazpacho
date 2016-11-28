@@ -1,8 +1,8 @@
 import StepDefGroup from 'step-def-group';
 
-let thing;
-
 export default new StepDefGroup((stepDef) => {
+  let thing;
+
   stepDef('I am successful', (assert) => {
     assert.ok(true);
   });

@@ -1,20 +1,52 @@
 /* global QUnit */
-import StepDef from 'step-def';
+import { default as StepDef, matcher, } from 'step-def';
+
+const NOOP = function() {};
 
 QUnit.module('Unit | StepDef');
 
-QUnit.test('it runs the callback', function(assert) {
-  assert.expect(1);
+QUnit.test('#execute', function(assert) {
+  assert.expect(3);
 
-  let stepDef = new StepDef('cool step', function(stepAssert) {
-    stepAssert.ok(true);
+  let stepDef;
+
+  stepDef = new StepDef('cool step', (stepAssert) => {
+    assert.equal(typeof stepAssert.ok, 'function');
+    assert.ok(true);
   });
 
-  let assertMock = {
-    ok(exp) {
-      assert.ok(exp);
-    },
-  };
+  stepDef.execute();
 
-  stepDef.execute(assertMock);
+  stepDef = new StepDef(matcher`really ${'adj'} step`, (_assert, adj) => {
+    assert.equal(adj, 'cool');
+  });
+
+  stepDef.execute(transformTemplate`really ${'cool'} step`);
 });
+
+QUnit.test('#matchesTemplate', function(assert) {
+  assert.expect(2);
+
+  let stepDef;
+
+  stepDef = new StepDef(matcher`really ${'adj'} step`, NOOP);
+
+  assert.ok(stepDef.matchesTemplate(transformTemplate`really ${'cool'} step`));
+
+  stepDef = new StepDef('really cool step', NOOP);
+
+  assert.ok(stepDef.matchesTemplate(transformTemplate`really cool step`));
+});
+
+QUnit.test('matcher()', function(assert) {
+  assert.expect(1);
+
+  let actual = matcher`really ${'adj'} step`;
+  let expected = 'really  step';
+
+  assert.equal(actual, expected);
+});
+
+function transformTemplate(...taggedTemplate) {
+  return taggedTemplate;
+}

@@ -1,10 +1,6 @@
 /* global QUnit */
 import Suite from 'suite';
 
-const {
-  module,
-  test,
-} = QUnit;
 class Feature {
   constructor(name) {
     this.name = name;
@@ -23,38 +19,62 @@ class Scenario {
     this.name = `${this.name} with ${background.name}`;
   }
 }
+const queue = {
+  _data: [],
+  push(object) {
+    this._data.push(object);
+  },
 
-module('Unit | Suite');
+  shift() {
+    return this._data.shift();
+  },
 
-test('#count', function(assert) {
+  count() {
+    return this._data.length;
+  },
+
+  flush() {
+    this._data = [];
+  }
+};
+
+QUnit.module('Unit | Suite');
+
+QUnit.test('get count', function(assert) {
   assert.expect(1);
 
-  let suite = new Suite();
+  let suite = new Suite({});
+  let featureMock = new Feature('cool feature');
+  let firstScenarioMock = new Scenario('foo scenario');
+  let secondScenarioMock = new Scenario('bar scenario');
 
-  suite.scenarios = [1, 2, 3];
+  queue.flush();
+  queue.push(featureMock);
+  queue.push(firstScenarioMock);
+  queue.push(secondScenarioMock);
+  suite.processQueue(queue);
 
-  assert.equal(suite.count, 3);
+  assert.equal(suite.count, 2);
 });
 
-test('#gherkin', function(assert) {
+QUnit.test('get gherkin', function(assert) {
   assert.expect(0);
 });
 
-test('#processQueue', function(assert) {
+QUnit.test('#processQueue', function(assert) {
   assert.expect(4);
 
-  let suite = new Suite();
+  let suite = new Suite({});
   let featureMock = new Feature('cool feature');
   let backgroundMock = new Background('sweet background');
   let firstScenarioMock = new Scenario('foo scenario');
   let secondScenarioMock = new Scenario('bar scenario');
-  let queue = [
-    featureMock,
-    backgroundMock,
-    firstScenarioMock,
-    secondScenarioMock,
-  ];
 
+  queue.flush();
+  queue.push(featureMock);
+  queue.push(backgroundMock);
+  queue.push(firstScenarioMock);
+  queue.push(secondScenarioMock);
   suite.processQueue(queue);
 
   assert.deepEqual(firstScenarioMock.feature, featureMock);

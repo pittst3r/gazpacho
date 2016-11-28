@@ -1,9 +1,11 @@
 global._queue = global._queue || [];
 
 export default {
-  pusher(type) {
+  pusher(type, ...prependArgs) {
     return (...typeArgs) => {
-      this.push(new type(...typeArgs));
+      let allArgs = prependArgs.concat(typeArgs);
+
+      this.push(new type(...allArgs));
     };
   },
 

@@ -29,9 +29,7 @@ program
   .command('run')
   .description('Run suite')
   .option('-f, --filter <pattern>', 'Filter tests by feature + scenario name')
-  .action(function(cmd) {
-    var filter;
-    filter = cmd.filter;
+  .action(function({ filter, }) {
     loadTests({ filter, });
     process.stdout.write(`1..${suite.count}\n`);
     suite.run((result) => {

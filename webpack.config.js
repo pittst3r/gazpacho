@@ -4,7 +4,6 @@ var path = require('path');
 module.exports = {
   entry: {
     cornichon: './src/cornichon.js',
-    helpers: './src/helpers/index.js',
   },
   output: {
     path: path.resolve(__dirname, 'lib'),
@@ -13,6 +12,7 @@ module.exports = {
     libraryTarget: 'commonjs2',
   },
   target: 'node',
+  devtool: 'source-map',
   module: {
     loaders: [
       {
@@ -29,6 +29,9 @@ module.exports = {
         loader: 'babel',
         query: {
           presets: ['es2015',],
+          plugins: [
+            'transform-function-bind',
+          ],
         },
       },
       {
@@ -46,10 +49,6 @@ module.exports = {
       path.resolve(__dirname, 'src'),
     ],
     modulesDirectories: ['node_modules',],
-  },
-  devServer: {
-    inline: true,
-    historyApiFallback: true,
   },
   eslint: {
     configFile: '.eslintrc.js',

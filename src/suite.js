@@ -2,6 +2,9 @@ import Result from 'result';
 import StepSequence from 'step-sequence';
 
 const NOOP = function() {};
+const FEATURE_CONTEXT = 'feature_context';
+const SCENARIO_CONTEXT = 'scenario_context';
+const BACKGROUND_CONTEXT = 'background_context';
 
 export default class Suite {
   constructor({ filter, beforeEachScenario, afterEachScenario, }) {
@@ -17,26 +20,25 @@ export default class Suite {
   }
 
   get gherkin() {
-    return this._gherkinArray.join('\n\n').concat('\n');
+    return this._gherkinArray.join('').concat('\n');
   }
 
   processQueue(queue) {
     let queueItem;
-    let actionMap = {
-      Feature: this._processFeature.bind(this),
-      Background: this._processBackground.bind(this),
-      Scenario: this._processScenario.bind(this),
+    let processorMap = {
+      Feature: this::processFeature,
+      Background: this::processBackground,
+      Scenario: this::processScenario,
+      Step: this::processStep,
     };
 
-    if (queue.count() === 0) {
-      return;
-    }
+    if (queue.count() === 0) { return; }
 
     queueItem = queue.shift();
 
-    this._gherkinArray.push(queueItem.gherkin);
+    processorMap[queueItem.constructor.name](queueItem);
 
-    actionMap[queueItem.constructor.name](queueItem);
+    this._gherkinArray.push(queueItem.gherkin);
 
     this.processQueue(queue);
   }
@@ -47,34 +49,60 @@ export default class Suite {
       let after = this._afterEachScenario || NOOP;
       let stepSequence = new StepSequence(scenario, before, after);
       let testResult = stepSequence.run();
+
       callback(new Result(testResult, testIndex, scenario.feature));
     });
   }
+}
 
-  _processFeature(queueItem) {
-    this._currentFeature = queueItem;
+function processFeature(queueItem) {
+  if (this._currentContext === SCENARIO_CONTEXT) {
+    this._gherkinArray.push('\n');
+  }
+  this._currentContext = FEATURE_CONTEXT;
+  this._currentFeature = queueItem;
+}
+
+function processBackground(queueItem) {
+  this._currentContext = BACKGROUND_CONTEXT;
+  this._currentBackground = queueItem;
+}
+
+function processScenario(queueItem) {
+  this._currentContext = SCENARIO_CONTEXT;
+
+  if (this::shouldFilterOutScenario(queueItem)) { return; }
+
+  this._currentScenario = queueItem;
+  queueItem.feature = this._currentFeature;
+
+  if (this._currentBackground) {
+    queueItem.prependBackground(this._currentBackground);
   }
 
-  _processBackground(queueItem) {
-    this._currentBackground = queueItem;
+  this._scenarios.push(queueItem);
+}
+
+function processStep(queueItem) {
+  let isBackgroundContext = this._currentContext === BACKGROUND_CONTEXT;
+  let isScenarioFilteredOut =
+    !this._currentScenario || this::shouldFilterOutScenario(this._currentScenario);
+
+  if (isBackgroundContext) {
+    this._currentBackground.registerStep(queueItem);
+    return;
   }
 
-  _processScenario(queueItem) {
-    if (this._shouldFilterOutScenario(queueItem)) { return; }
-
-    queueItem.feature = this._currentFeature;
-
-    if (this._currentBackground) {
-      queueItem.prependBackground(this._currentBackground);
-    }
-
-    this._scenarios.push(queueItem);
+  if (isScenarioFilteredOut) {
+    return;
   }
 
-  _shouldFilterOutScenario(scenario) {
-    let filter = this._filter;
-    let nameToMatch = [this._currentFeature.name, scenario.name,].join(' ');
+  this._currentScenario.registerStep(queueItem);
+}
 
-    return filter && !nameToMatch.includes(filter);
-  }
+function shouldFilterOutScenario(scenario) {
+  let filter = this._filter;
+  let nameToMatch = `${this._currentFeature.name} ${scenario.name}`;
+
+  return filter && !nameToMatch.includes(filter);
 }
