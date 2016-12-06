@@ -11,5 +11,5 @@
       "tmp/features.js",
       "tmp/adapter.js"
   ],
-  "before_tests": "webpack --config webpack.cornichon-testem.config.js"
+  "before_tests": "webpack --config webpack.gazpacho-testem.config.js"
 }

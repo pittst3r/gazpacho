@@ -3,7 +3,7 @@ var path = require('path');
 
 module.exports = {
   entry: {
-    cornichon: './src/cornichon.js',
+    gazpacho: './src/gazpacho.js',
   },
   output: {
     path: path.resolve(__dirname, 'lib'),

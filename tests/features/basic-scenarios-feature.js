@@ -1,10 +1,11 @@
 import {
+  and,
   feature,
   scenario,
   given,
   when,
   then,
-} from 'cornichon';
+} from 'gazpacho';
 import FeatureSteps from 'tests/features/step-defs/feature-steps';
 
 feature('Basic scenarios',
@@ -12,17 +13,14 @@ feature('Basic scenarios',
   As a developer 
   I want to be able to define a scenario that runs`);
 
-scenario('With a passing scenario', FeatureSteps);
-given`I have defined ${1} successful scenarios`;
+scenario('Mixed success', FeatureSteps);
+given`I have defined ${3} successful scenarios`;
+and`I have defined ${2} failing scenarios`;
 when`I run the suite`;
-then`the scenarios should be successful`;
+then`${3} scenarios should be successful`;
+and`${2} scenarios should be unsuccessful`;
 
-scenario('With a failing scenario', FeatureSteps);
-given`I have defined ${1} failing scenarios`;
-when`I run the suite`;
-then`the scenarios should be unsuccessful`;
-
-scenario('With a background', FeatureSteps);
+scenario('Background', FeatureSteps);
 given`I have defined a scenario with a background`;
 when`I run the suite`;
-then`the scenarios should be successful`;
+then`${1} scenarios should be successful`;

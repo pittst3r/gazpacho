@@ -15,8 +15,8 @@ module.exports = {
   module: {
     loaders: [
       {
-        test: require.resolve('./src/cornichon'),
-        loader: 'expose-loader?cornichon',
+        test: require.resolve('./src/gazpacho'),
+        loader: 'expose-loader?gazpacho',
       },
       {
         test: /\.js$/,

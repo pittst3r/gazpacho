@@ -1,13 +1,13 @@
-/* globals Testem, cornichon */
+/* globals Testem, gazpacho */
 
 Testem.useCustomAdapter(customAdapter);
 
 function customAdapter(socket) {
-  let { queue, Suite, } = cornichon;
+  let { queue, Suite, } = gazpacho;
   let suite = new Suite({});
 
   suite.processQueue(queue);
-  
+
   socket.emit('tests-start');
   runSuite(suite, result => {
     socket.emit('test-result', result);

@@ -9,7 +9,7 @@ import {
   then,
   when,
   matcher,
-} from 'cornichon';
+} from 'gazpacho';
 import BasicSteps from './basic-steps';
 
 export default new StepDefGroup((stepDef) => {
@@ -23,10 +23,12 @@ export default new StepDefGroup((stepDef) => {
     }
   });
 
-  stepDef(matcher`I have defined ${'n'} failing scenarios`, () => {
+  stepDef(matcher`I have defined ${'n'} failing scenarios`, (_assert, n) => {
     feature('failing feature', 'whatever');
-    scenario('failure', BasicSteps);
-    then`I am not successful`;
+    for (let i = 0; i < n; i++) {
+      scenario(`${i}`, BasicSteps);
+      then`I am not successful`;
+    }
   });
 
   stepDef('I have defined a scenario with a background', () => {
@@ -52,18 +54,20 @@ export default new StepDefGroup((stepDef) => {
     });
   });
 
-  stepDef('the scenarios should be successful', (assert) => {
-    assert.expect(results.length || 1);
-    results.forEach((result) => {
-      assert.ok(result.didPass, `Expected didPass to be true but was ${result.didPass}`);
-    });
+  stepDef(matcher`${'n'} scenarios should be successful`, (assert, n) => {
+    assert.expect(1);
+
+    let successfulResults = results.filter(result => result.didPass);
+
+    assert.equal(successfulResults.length, n);
   });
 
-  stepDef('the scenarios should be unsuccessful', (assert) => {
-    assert.expect(results.length || 1);
-    results.forEach((result) => {
-      assert.notOk(result.didPass);
-    });
+  stepDef(matcher`${'n'} scenarios should be unsuccessful`, (assert, n) => {
+    assert.expect(1);
+
+    let unsuccessfulResults = results.filter(result => !result.didPass);
+
+    assert.equal(unsuccessfulResults.length, n);
   });
 
   stepDef('an undefined step def error should be raised', (assert) => {

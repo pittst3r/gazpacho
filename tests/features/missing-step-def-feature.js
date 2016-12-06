@@ -4,7 +4,7 @@ import {
   given,
   when,
   then,
-} from 'cornichon';
+} from 'gazpacho';
 import FeatureSteps from 'tests/features/step-defs/feature-steps';
 
 feature('Missing step defs',
